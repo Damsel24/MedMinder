@@ -24,50 +24,57 @@ namespace MedMinder_Api.Controllers
             _mapper = mapper;
         }
 
-        // [HttpGet]
-        // public async Task<ActionResult<IEnumerable<PatientReadDto>>> GetAllPatients([FromHeader] bool flipSwitch)
-        // {
-        //     var patients = await _repo.GetAllPatients();
-        //     Console.ForegroundColor = ConsoleColor.Blue;
-        //     Console.WriteLine($"--> The flip switch is: {flipSwitch}");
-        //     Console.ResetColor();
-
-        //     return Ok(_mapper.Map<IEnumerable<PatientReadDto>>(patients));
-        // }
-
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<PatientReadDto>>> GetAllPatients([FromHeader] bool flipSwitch, string sort_by)
+        [HttpGet("SortPatients")]
+        public async Task<ActionResult<IEnumerable<PatientReadDto>>> GetPatients(
+            string sort_by = null,
+            string firstName = null,
+            string lastName = null,
+            bool? active = null,
+            string city = null)
         {
             var patients = await _repo.GetAllPatients();
 
-            Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine($"--> The flip switch is: {flipSwitch}");
-            Console.ResetColor();
-
-            if (!string.IsNullOrWhiteSpace(sort_by))
+            // Filtering
+            if (!string.IsNullOrWhiteSpace(firstName))
             {
-                switch (sort_by.ToLower())
-                {
-                    case "first":
-                        patients = patients.OrderBy(p => p.FirstName);
-                        break;
-                    case "last":
-                        patients = patients.OrderBy(p => p.LastName);
-                        break;
-                    case "active":
-                        patients = patients.OrderBy(p => p.Active);
-                        break;
-                    case "city":
-                        patients = patients.OrderBy(p => p.City);
-                        break;
-                    default:
-                        // Handle invalid sort_by parameter
-                        return BadRequest("Invalid sort_by parameter.");
-                }
+                patients = patients.Where(p => p.FirstName.Equals(firstName, StringComparison.OrdinalIgnoreCase));
             }
+
+            if (!string.IsNullOrWhiteSpace(lastName))
+            {
+                patients = patients.Where(p => p.LastName.Equals(lastName, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (active.HasValue)
+            {
+                patients = patients.Where(p => p.Active == active.Value);
+            }
+
+            if (!string.IsNullOrWhiteSpace(city))
+            {
+                patients = patients.Where(p => p.City.Equals(city, StringComparison.OrdinalIgnoreCase));
+            }
+
+            // Sorting
+            patients = sort_by?.ToLower() switch
+            {
+                "firstname" => patients.OrderBy(p => p.FirstName),
+                "lastname" => patients.OrderBy(p => p.LastName),
+                "active" => patients.OrderBy(p => p.Active),
+                "city" => patients.OrderBy(p => p.City),
+                _ => patients // No sorting if the sort_by parameter is invalid or not provided
+            };
 
             return Ok(_mapper.Map<IEnumerable<PatientReadDto>>(patients));
         }
+
+        [HttpGet("GetAllPatients")]
+        public async Task<ActionResult<IEnumerable<PatientReadDto>>> GetAllPatients()
+        {
+            var patients = await _repo.GetAllPatients();
+            return Ok(_mapper.Map<IEnumerable<PatientReadDto>>(patients));
+        }
+       
 
         [HttpGet("{id}", Name = "GetPatientById")]
         public async Task<ActionResult<PatientReadDto>> GetPatientById(int id)

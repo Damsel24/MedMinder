@@ -15,12 +15,13 @@ builder.Services.AddControllers().AddNewtonsoftJson(s => {
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var sqlConBuilder = new SqlConnectionStringBuilder();
+// var sqlConBuilder = new SqlConnectionStringBuilder();
+// sqlConBuilder.ConnectionString = builder.Configuration.GetConnectionString("SQLDbConnection");
+// builder.Services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(sqlConBuilder.ConnectionString));
 
-sqlConBuilder.ConnectionString = builder.Configuration.GetConnectionString("SQLDbConnection");
 
+builder.Services.AddDbContext<AppDbContext>(opt => opt.UseInMemoryDatabase(databaseName: "MedMinderDb"));
 
-builder.Services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(sqlConBuilder.ConnectionString));
 builder.Services.AddScoped<IPatientRepo, PatientRepo>();
 builder.Services.AddScoped<TestAsyncActionFilter>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

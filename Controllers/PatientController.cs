@@ -26,23 +26,30 @@ namespace MedMinder_Api.Controllers
 
         [HttpGet("SortPatients")]
         public async Task<ActionResult<IEnumerable<PatientReadDto>>> GetPatients(
-            string sort_by = null,
-            string firstName = null,
-            string lastName = null,
+            string? sort_by = null,
+            string? firstName = null,
+            string? lastName = null,
             bool? active = null,
-            string city = null)
+            string? city = null)
         {
             var patients = await _repo.GetAllPatients();
+
+             // Ensure patients is not null
+            if (patients == null)
+            {
+                return NotFound("No patients found");
+            }
 
             // Filtering
             if (!string.IsNullOrWhiteSpace(firstName))
             {
-                patients = patients.Where(p => p.FirstName.Equals(firstName, StringComparison.OrdinalIgnoreCase));
+                        patients = patients.Where(p => p.FirstName != null && p.FirstName.Equals(firstName, StringComparison.OrdinalIgnoreCase)).ToList();
+
             }
 
             if (!string.IsNullOrWhiteSpace(lastName))
             {
-                patients = patients.Where(p => p.LastName.Equals(lastName, StringComparison.OrdinalIgnoreCase));
+                       patients = patients.Where(p => p.LastName != null && p.LastName.Equals(lastName, StringComparison.OrdinalIgnoreCase)).ToList();
             }
 
             if (active.HasValue)
@@ -52,7 +59,7 @@ namespace MedMinder_Api.Controllers
 
             if (!string.IsNullOrWhiteSpace(city))
             {
-                patients = patients.Where(p => p.City.Equals(city, StringComparison.OrdinalIgnoreCase));
+                patients = patients.Where(p => p.City != null && p.City.Equals(city, StringComparison.OrdinalIgnoreCase)).ToList();
             }
 
             // Sorting

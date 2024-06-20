@@ -3,11 +3,25 @@ import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CommonModule, HttpClientModule, FormsModule, ReactiveFormsModule],
+  imports: [
+    RouterOutlet, 
+    CommonModule, 
+    HttpClientModule, 
+    FormsModule, 
+    ReactiveFormsModule, 
+    MatInputModule, 
+    MatSelectModule, 
+    MatButtonModule
+  ], 
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
@@ -15,7 +29,9 @@ export class AppComponent implements OnInit {
   tasks: any[] = [];
   APIURL = "http://localhost:5121/api/v1/Patient/GetAllPatients";
   POSTURL = "http://localhost:5121/api/v1/Patient";
-  displayedColumns: string[] = ['firstName', 'lastName', 'city', 'active'];
+  DELETEURL = "http://localhost:5121/api/v1/Patient"; // Assuming DELETE URL is the same
+
+  displayedColumns: string[] = ['firstName', 'lastName', 'city', 'active', 'actions'];
   newTask = {
     firstName: '',
     lastName: '',
@@ -54,6 +70,23 @@ export class AppComponent implements OnInit {
       },
       (error) => {
         console.error('Error adding task:', error);
+      }
+    );
+  }
+
+  
+
+  deleteTask(index: number) {
+    const task = this.tasks[index];
+    const deleteURL = `${this.DELETEURL}/${task.patientId}`; // Assuming each task has a unique id
+
+    this.http.delete(deleteURL).subscribe(
+      (res) => {
+        this.tasks.splice(index, 1); // Remove the task from the array
+        this.tasks = [...this.tasks]; // Update the tasks array to trigger change detection
+      },
+      (error) => {
+        console.error('Error deleting task:', error);
       }
     );
   }

@@ -1,6 +1,31 @@
+.form-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.form-field {
+  flex: 1;
+  min-width: 100px; /* Optional: Ensures the fields have a minimum width */
+}
+
+.form-button {
+  display: flex;
+  justify-content: center;
+}
+
 .table-container {
   display: flex;
   justify-content: center;
+  margin-top: 20px;
 }
 
 .centered-table {
@@ -15,18 +40,15 @@
   text-align: center;
 }
 
-form {
-  margin-top: 20px;
-}
-
-form div {
+.action-buttons {
   display: flex;
-  flex-direction: column;
   align-items: center;
+  justify-content: center;
 }
 
-form label,
-form input,
-form button {
-  margin: 5px;
+.separator {
+  width: 1px;
+  height: 24px;
+  background-color: #ccc;
+  margin: 0 8px;
 }

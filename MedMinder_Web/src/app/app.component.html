@@ -1,6 +1,37 @@
 <div style="margin: 100px;">
   <h2 style="background-color: aqua; text-align: center;">MedMinder Challenge</h2>
-  
+  <h3 style="text-align: center;">Add New Patient</h3>
+  <form (ngSubmit)="addTask()">
+    <div class="form-container">
+      <div class="form-row">
+        <mat-form-field class="form-field">
+          <mat-label>Please Input First Name:</mat-label>
+          <input matInput type="text" id="firstName" [(ngModel)]="newTask.firstName" name="firstName">
+        </mat-form-field>
+        <mat-form-field class="form-field">
+          <mat-label>Please Input Last Name:</mat-label>
+          <input matInput type="text" id="lastName" [(ngModel)]="newTask.lastName" name="lastName">
+        </mat-form-field>
+      </div>
+      <div class="form-row">
+        <mat-form-field class="form-field">
+          <mat-label>Please Input City:</mat-label>
+          <input matInput type="text" id="city" [(ngModel)]="newTask.city" name="city">
+        </mat-form-field>
+        <mat-form-field class="form-field">
+          <mat-label>Active</mat-label>
+          <mat-select [(ngModel)]="newTask.active" name="active" required>
+            <mat-option [value]="'Yes'">Yes</mat-option>
+            <mat-option [value]="'No'">No</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="form-button">
+        <button mat-flat-button type="submit">Add Patient</button>
+      </div>
+
+    </div>
+  </form>
   <div class="table-container">
     <table border="1" cellspacing="0" cellpadding="10" class="centered-table">
       <thead>
@@ -9,31 +40,23 @@
           <th>Last Name</th>
           <th>City</th>
           <th>Active</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let item of tasks">
+        <tr *ngFor="let item of tasks; let i = index">
+          <td>{{ item.patientId }}</td>
           <td>{{ item.firstName }}</td>
           <td>{{ item.lastName }}</td>
           <td>{{ item.city }}</td>
-          <td>{{ item.active }}</td>
+          <td>{{ item.active}}</td>
+          <td>
+            <button mat-button (click)="deleteTask(i)">Delete</button>
+          </td>
+
+          
         </tr>
       </tbody>
     </table>
   </div>
-
-  <h3 style="text-align: center;">Add New Patient</h3>
-  <form (ngSubmit)="addTask()">
-    <div style="text-align: center;">
-      <label for="firstName">First Name:</label>
-      <input type="text" id="firstName" [(ngModel)]="newTask.firstName" name="firstName">
-      <label for="lastName">Last Name:</label>
-      <input type="text" id="lastName" [(ngModel)]="newTask.lastName" name="lastName">
-      <label for="city">City:</label>
-      <input type="text" id="city" [(ngModel)]="newTask.city" name="city">
-      <label for="active">Active yes/no:</label>
-      <input type="text" id="active" [(ngModel)]="newTask.active" name="active">
-      <button type="submit">Add Patient</button>
-    </div>
-  </form>
 </div>
